@@ -9,7 +9,7 @@ export const docUserService: SwaggerMethod<UsersController> = {
       ApiOperation({ summary }),
       ApiResponse({
         status: HttpStatus.CREATED,
-        description: 'Created package price success',
+        description: 'Created user price success',
       }),
       ApiResponse({
         status: HttpStatus.BAD_REQUEST,
@@ -27,7 +27,7 @@ export const docUserService: SwaggerMethod<UsersController> = {
       ApiOperation({ summary }),
       ApiResponse({
         status: HttpStatus.OK,
-        description: 'Get package price success',
+        description: 'Get user price success',
       }),
       ApiResponse({
         status: HttpStatus.BAD_REQUEST,
@@ -35,7 +35,7 @@ export const docUserService: SwaggerMethod<UsersController> = {
       }),
       ApiResponse({
         status: HttpStatus.NOT_FOUND,
-        description: 'Not found package price',
+        description: 'Not found user price',
       }),
       ApiResponse({
         status: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -49,7 +49,7 @@ export const docUserService: SwaggerMethod<UsersController> = {
       ApiOperation({ summary }),
       ApiResponse({
         status: HttpStatus.OK,
-        description: 'Update package price success',
+        description: 'Update user price success',
       }),
       ApiResponse({
         status: HttpStatus.BAD_REQUEST,
@@ -57,7 +57,7 @@ export const docUserService: SwaggerMethod<UsersController> = {
       }),
       ApiResponse({
         status: HttpStatus.NOT_FOUND,
-        description: 'Not found package price',
+        description: 'Not found user price',
       }),
       ApiResponse({
         status: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -71,7 +71,7 @@ export const docUserService: SwaggerMethod<UsersController> = {
       ApiOperation({ summary }),
       ApiResponse({
         status: HttpStatus.OK,
-        description: 'Delete package price success',
+        description: 'Delete user price success',
       }),
       ApiResponse({
         status: HttpStatus.BAD_REQUEST,
@@ -79,7 +79,51 @@ export const docUserService: SwaggerMethod<UsersController> = {
       }),
       ApiResponse({
         status: HttpStatus.NOT_FOUND,
-        description: 'Not found package price',
+        description: 'Not found user price',
+      }),
+      ApiResponse({
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        description: 'Internal Server Error',
+      }),
+    );
+  },
+
+  readMYself: (summary: string) => {
+    return applyDecorators(
+      ApiOperation({ summary }),
+      ApiResponse({
+        status: HttpStatus.OK,
+        description: 'Delete user price success',
+      }),
+      ApiResponse({
+        status: HttpStatus.BAD_REQUEST,
+        description: 'Bad Request',
+      }),
+      ApiResponse({
+        status: HttpStatus.NOT_FOUND,
+        description: 'Not found user price',
+      }),
+      ApiResponse({
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        description: 'Internal Server Error',
+      }),
+    );
+  },
+
+  updateMyself: (summary: string) => {
+    return applyDecorators(
+      ApiOperation({ summary }),
+      ApiResponse({
+        status: HttpStatus.OK,
+        description: 'Delete user price success',
+      }),
+      ApiResponse({
+        status: HttpStatus.BAD_REQUEST,
+        description: 'Bad Request',
+      }),
+      ApiResponse({
+        status: HttpStatus.NOT_FOUND,
+        description: 'Not found user price',
       }),
       ApiResponse({
         status: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -93,7 +137,7 @@ export const docUserService: SwaggerMethod<UsersController> = {
       ApiOperation({ summary }),
       ApiResponse({
         status: HttpStatus.OK,
-        description: 'Delete package price success',
+        description: 'Delete user price success',
       }),
       ApiResponse({
         status: HttpStatus.BAD_REQUEST,
@@ -101,7 +145,7 @@ export const docUserService: SwaggerMethod<UsersController> = {
       }),
       ApiResponse({
         status: HttpStatus.NOT_FOUND,
-        description: 'Not found package price',
+        description: 'Not found user price',
       }),
       ApiResponse({
         status: HttpStatus.INTERNAL_SERVER_ERROR,

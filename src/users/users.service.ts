@@ -33,6 +33,16 @@ export class UsersService {
     return user;
   }
 
+  async updateMyself(req, body: UpdateUserDto) {
+    await this.userRepository.update({ id: req.user.id }, body);
+    return this.userRepository.findOneBy({ id: req.user.id });
+  }
+
+  async readMyself(req) {
+    const user = await this.userRepository.findOneBy({ id: req.user._id });
+    return user;
+  }
+
   update(id: number, body: UpdateUserDto) {
     return `This action updates a #${id} user`;
   }

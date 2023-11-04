@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Req,
+  Put,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -41,7 +42,7 @@ export class UsersController {
   @ApiBearerAuth()
   @Roles([ERoleDefault.ADMIN, ERoleDefault.ROOT])
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Get(':id')
+  @Get(':id/get-by-id')
   @docUserService.findOne('get user by id')
   findOne(@Param('id') id: number) {
     return this.usersService.findOne(id);
@@ -49,6 +50,21 @@ export class UsersController {
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @Put('update-myself')
+  @docUserService.updateMyself('update info myself')
+  updateMyself(@Req() req, @Body() body: UpdateUserDto) {
+    return this.usersService.updateMyself(req, body);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Get('read-myself')
+  @docUserService.readMYself('read info myself')
+  readMYself(@Req() req) {
+    return this.usersService.readMyself(req);
+  }
+
+  @ApiBearerAuth()
   @Roles([ERoleDefault.ADMIN, ERoleDefault.ROOT])
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch(':id')
@@ -58,7 +74,6 @@ export class UsersController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
   @Roles([ERoleDefault.ADMIN, ERoleDefault.ROOT])
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete(':id')

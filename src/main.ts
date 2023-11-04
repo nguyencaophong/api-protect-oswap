@@ -29,7 +29,7 @@ async function bootstrap() {
 
   const { httpAdapter } = api.get(HttpAdapterHost);
   api.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
-  api.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+  api.useGlobalPipes(new ValidationPipe({ transform: true }));
 
   await api.listen(PORT, () => {
     console.log(`Server is running on: http://localhost:${PORT}`);
