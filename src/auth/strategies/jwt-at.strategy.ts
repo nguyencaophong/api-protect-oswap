@@ -28,6 +28,6 @@ export class JwtAuthStrategies extends PassportStrategy(Strategy, 'jwt-auth') {
     if (!user) {
       throw new NotFoundException('Account does not exist');
     }
-    return user;
+    return { ...user, roles: ['User'] };
   }
 }

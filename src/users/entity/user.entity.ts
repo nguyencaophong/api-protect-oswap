@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 import { ESex } from '../enum/sex.enum';
 import { TAddress } from '../types';
+import { ERoleDefault } from 'src/common/enum';
 
 @Entity()
 export class User {
@@ -40,4 +41,8 @@ export class User {
   @ApiProperty()
   @Column({ nullable: true })
   refreshToken: string;
+
+  @ApiProperty()
+  @Column({ type: 'enum', enum: ERoleDefault, default: ERoleDefault.USER })
+  role: string;
 }
