@@ -36,4 +36,8 @@ export class User {
   @ApiProperty()
   @Column({ default: true })
   isActive: boolean;
+
+  @ApiProperty()
+  @Column({ nullable: true })
+  refreshToken: string;
 }
