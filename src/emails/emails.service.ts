@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ForbiddenException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -13,6 +14,11 @@ import { ConfigService } from '@nestjs/config';
 import * as sgMail from '@sendgrid/mail';
 import * as bcrypt from 'bcrypt';
 
+import { InjectQueue } from '@nestjs/bull';
+import { EQueueName } from 'src/common/enum';
+import { Queue } from 'bull';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 import { emailVerifyTemplate } from './templates';
 
 @Injectable()
@@ -23,6 +29,13 @@ export class EmailsService {
 
     // ** Services
     private configService: ConfigService,
+
+    // ** Bull-Queue
+    @InjectQueue(EQueueName.SEND_EMAIL_QUEUE)
+    private sendEmailQueue: Queue,
+
+    // ** Redis
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {
     sgMail.setApiKey(
       this.configService.get('NODE_ENV') === 'production'
@@ -31,27 +44,25 @@ export class EmailsService {
     );
   }
 
-  sendCode(msg) {
-    const PEmail = {
+  async sendCode(msg) {
+    const pSendEmail = {
       title: 'Your code',
       subTitle:
         'Below is your code to recover your password, absolutely do not share this code with anyone:',
       value: msg.code,
     };
-    try {
-      if (this.configService.get('NODE_ENV') === 'development') {
-        return msg.code;
-      }
-      sgMail.send({
-        from: `SGOD <${this.configService.get('MAILER_ADDR')}>`,
-        to: msg.email,
-        subject: msg.title,
-        html: emailVerifyTemplate(PEmail),
-      });
-      return 'We have sent a verification code to your email.\nPlease enter code to below.';
-    } catch (err) {
-      return 'Email not sent';
-    }
+    await this.sendEmailQueue.add(
+      'register',
+      {
+        sgMail,
+        msg: msg,
+        pSendEmail: pSendEmail,
+      },
+      {
+        delay: 1000,
+        removeOnComplete: true,
+      },
+    );
   }
 
   async verify(email: string, code: string) {
@@ -122,7 +133,7 @@ export class EmailsService {
       title: 'Verify Email',
       code,
     };
-    const msg = this.sendCode(payload);
-    return { code: msg };
+    this.sendCode(payload);
+    return { code: code };
   }
 }

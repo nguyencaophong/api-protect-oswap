@@ -18,8 +18,10 @@ import { docUserService } from 'src/common/swagger/user.swagger';
 import { JwtAuthGuard, RolesGuard } from 'src/common/guards';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { ERoleDefault } from 'src/common/enum';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @ApiTags('Users')
+@SkipThrottle()
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}

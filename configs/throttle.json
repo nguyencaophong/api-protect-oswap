@@ -1,0 +1,17 @@
+[
+    {
+        "name": "short",
+        "limit": 10,
+        "ttl": 10000
+    },
+    {
+        "name": "medium",
+        "limit": 20,
+        "ttl": 30000
+    },
+    {
+        "name": "long",
+        "limit": 500,
+        "ttl": 60000
+    }
+]
