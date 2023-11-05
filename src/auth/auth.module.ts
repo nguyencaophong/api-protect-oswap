@@ -8,9 +8,15 @@ import { User } from 'src/users/entity/user.entity';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtAuthStrategies } from './strategies/jwt-at.strategy';
 import { JwtAuthGuard, LocalAuthGuard } from 'src/common/guards';
+import { EmailsModule } from 'src/emails/emails.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]), JwtModule, PassportModule],
+  imports: [
+    TypeOrmModule.forFeature([User]),
+    JwtModule,
+    PassportModule,
+    EmailsModule,
+  ],
   controllers: [AuthController],
   providers: [
     AuthService,

@@ -69,7 +69,6 @@ export const docAuthService: SwaggerMethod<AuthController> = {
         status: HttpStatus.INTERNAL_SERVER_ERROR,
         description: 'Internal Server Error',
       }),
-      ApiBearerAuth(),
     );
   },
 };

@@ -3,6 +3,7 @@ import {
   EntitySubscriberInterface,
   EventSubscriber,
   InsertEvent,
+  UpdateEvent,
 } from 'typeorm';
 import { User } from './entity/user.entity';
 import * as bcrypt from 'bcrypt';
@@ -21,4 +22,8 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
     const hashPassword = await bcrypt.hash(event.entity.password, 10);
     event.entity.password = hashPassword;
   }
+  // async beforeUpdate(event: UpdateEvent<User>) {
+  //   const hashPassword = await bcrypt.hash(event.entity.password, 10);
+  //   event.entity.password = hashPassword;
+  // }
 }

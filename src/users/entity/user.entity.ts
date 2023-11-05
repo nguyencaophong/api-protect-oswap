@@ -15,7 +15,7 @@ export class User {
   username: string;
 
   @ApiProperty()
-  @Column()
+  @Column({ select: false })
   password: string;
 
   @ApiProperty()

@@ -6,12 +6,14 @@ import {
   Patch,
   UseGuards,
   Req,
+  Param,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LoginDto } from './dto';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { LoginDto, ResetPasswordDto } from './dto';
+import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard, LocalAuthGuard } from 'src/common/guards';
 import { docAuthService } from 'src/common/swagger/auth.swagger';
+import { ParseUsernamePipe } from 'src/common/pipes';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -25,7 +27,6 @@ export class AuthController {
     return this.authService.login(req);
   }
 
-  @ApiBearerAuth()
   @docAuthService.logout('Logout user')
   @UseGuards(JwtAuthGuard)
   @Delete('logout')
@@ -33,10 +34,12 @@ export class AuthController {
     return this.authService.logout(req);
   }
 
-  @ApiBearerAuth()
   @docAuthService.resetPassword('Reset password user')
-  @Patch('reset-password')
-  resetPassword() {
-    return this.authService.resetPassword();
+  @Patch('reset-password/:username')
+  resetPassword(
+    @Param('username', ParseUsernamePipe) username: string,
+    @Body() body: ResetPasswordDto,
+  ) {
+    return this.authService.resetPassword(username, body);
   }
 }

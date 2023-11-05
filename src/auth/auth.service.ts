@@ -9,6 +9,9 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { ResetPasswordDto } from './dto';
+import { isEmail, isPhone } from 'src/common/utils';
+import { EmailsService } from 'src/emails/emails.service';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +23,7 @@ export class AuthService {
     // ** Services
     private configService: ConfigService,
     private jwtService: JwtService,
+    private emailService: EmailsService,
   ) { }
 
   async genTokens(payload: { id: number }) {
@@ -40,9 +44,11 @@ export class AuthService {
   }
 
   async validate(username: string, password: string): Promise<User> {
-    const hasUserExits = await this.userRepository.findOneBy({
-      username: username,
-    });
+    const hasUserExits = await this.userRepository
+      .createQueryBuilder('User')
+      .addSelect('User.password')
+      .where({ username })
+      .getOne();
     if (!hasUserExits) {
       throw new NotFoundException('Account not exits');
     }
@@ -54,6 +60,7 @@ export class AuthService {
     if (!isValidPassword) {
       throw new BadRequestException('Username or password not incorrect');
     }
+
     if (hasUserExits) return hasUserExits;
     else return null;
   }
@@ -74,5 +81,19 @@ export class AuthService {
     );
   }
 
-  resetPassword() { }
+  async resetPassword(username: string, body: ResetPasswordDto) {
+    const hasUserExits = await this.userRepository.findOneBy({ username });
+    if (!hasUserExits) {
+      throw new NotFoundException('Email or phone not registered.');
+    }
+    if (isEmail(username)) {
+      await this.emailService.verify(username, body.code);
+    }
+    if (isPhone(username)) {
+      // await this.phoneService.verify(username, body.code);
+    }
+
+    const hashPassword = await bcrypt.hash(body.new_password, 10);
+    await this.userRepository.update({ username }, { password: hashPassword });
+  }
 }
