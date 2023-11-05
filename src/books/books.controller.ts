@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UploadedFiles,
+  UseGuards,
 } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
@@ -14,6 +15,9 @@ import { UpdateBookDto } from './dto/update-book.dto';
 import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { docBookService } from 'src/common/swagger/book.swagger';
 import { ApiFiles } from 'src/common/interceptors/api-files.interceptor';
+import { JwtAuthGuard, RolesGuard } from 'src/common/guards';
+import { Roles } from 'src/common/decorators';
+import { ERoleDefault } from 'src/common/enum';
 
 @ApiTags('Books')
 @Controller('books')
@@ -61,6 +65,8 @@ export class BooksController {
       },
     },
   })
+  @Roles([ERoleDefault.ADMIN, ERoleDefault.ROOT])
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @docBookService.create('Create book')
   @Post()
   create(
@@ -76,6 +82,8 @@ export class BooksController {
     return this.booksService.findAll();
   }
 
+  @Roles([ERoleDefault.USER])
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @docBookService.findOne('Get book detail')
   @Get('user/:id')
   findOne(@Param('id') id: string) {
@@ -88,6 +96,8 @@ export class BooksController {
     // return this.booksService.update(+id, body);
   }
 
+  @Roles([ERoleDefault.ADMIN, ERoleDefault.ROOT])
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @docBookService.remove('Delete book by Id (manager role)')
   @Delete('admin/:id')
   remove(@Param('id') id: string) {

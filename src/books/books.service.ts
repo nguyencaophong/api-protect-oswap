@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateBookDto } from './dto/create-book.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Book } from './entities/book.entity';
@@ -42,12 +42,16 @@ export class BooksService {
     return this.bookRepository.find();
   }
 
-  findOne(id: number): Promise<Book> {
-    return this.bookRepository
+  async findOne(id: number): Promise<Book> {
+    const book = await this.bookRepository
       .createQueryBuilder(Book.name)
       .where({ id })
       .leftJoinAndSelect('Book.categories', Category.name)
       .getOne();
+    if (!book) {
+      throw new NotFoundException('Book not found');
+    }
+    return book;
   }
 
   // update(id: number, body: UpdateBookDto): Promise<Book> { }
