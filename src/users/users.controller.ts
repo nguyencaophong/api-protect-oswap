@@ -1,33 +1,85 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Req,
+  Put,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { docUserService } from 'src/common/swagger/user.swagger';
+import { JwtAuthGuard, RolesGuard } from 'src/common/guards';
+import { Roles } from 'src/common/decorators/roles.decorator';
+import { ERoleDefault } from 'src/common/enum';
+import { SkipThrottle } from '@nestjs/throttler';
 
+@ApiTags('Users')
+@SkipThrottle()
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  @docUserService.create('create user')
+  create(@Body() body: CreateUserDto) {
+    return this.usersService.create(body);
   }
 
-  @Get()
-  findAll() {
+  @ApiBearerAuth()
+  @Roles([ERoleDefault.ADMIN, ERoleDefault.ROOT])
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('all')
+  @docUserService.findAll('get all user')
+  findAll(@Req() req) {
     return this.usersService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  @ApiBearerAuth()
+  @Roles([ERoleDefault.ADMIN, ERoleDefault.ROOT])
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get(':id/get-by-id')
+  @docUserService.findOne('get user by id')
+  findOne(@Param('id') id: number) {
+    return this.usersService.findOne(id);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Put('update-myself')
+  @docUserService.updateMyself('update info myself')
+  updateMyself(@Req() req, @Body() body: UpdateUserDto) {
+    return this.usersService.updateMyself(req, body);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Get('read-myself')
+  @docUserService.readMYself('read info myself')
+  readMYself(@Req() req) {
+    return this.usersService.readMyself(req);
+  }
+
+  @ApiBearerAuth()
+  @Roles([ERoleDefault.ADMIN, ERoleDefault.ROOT])
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch(':id')
+  @docUserService.update('update user by id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(+id, updateUserDto);
   }
 
+  @ApiBearerAuth()
+  @Roles([ERoleDefault.ADMIN, ERoleDefault.ROOT])
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete(':id')
+  @docUserService.remove('remove user by id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);
   }
