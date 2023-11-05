@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { ESex } from '../enum/sex.enum';
 import { TAddress } from '../types';
 import { ERoleDefault } from 'src/common/enum';
+import { Category } from 'src/categories/entities/category.entity';
 
 @Entity()
 export class User {
@@ -45,4 +46,7 @@ export class User {
   @ApiProperty()
   @Column({ type: 'enum', enum: ERoleDefault, default: ERoleDefault.USER })
   role: string;
+
+  @OneToMany(() => Category, (category) => category.creator)
+  categories: Category[];
 }

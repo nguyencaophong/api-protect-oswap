@@ -3,7 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { RolesModule } from './roles/roles.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { EmailsModule } from './emails/emails.module';
@@ -13,6 +13,8 @@ import { throttleJSON } from 'configs';
 import { BullModule } from '@nestjs/bull';
 import { redisStore } from 'cache-manager-redis-store';
 import { CacheModule } from '@nestjs/cache-manager';
+import { BooksModule } from './books/books.module';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { CacheModule } from '@nestjs/cache-manager';
       database: process.env.MYSQL_DATABASE,
       autoLoadEntities: true,
       synchronize: true,
+      entities: ['dist/entities/*.js'],
+      migrations: ['dist/migrations/*.js'],
     }),
     ThrottlerModule.forRoot(throttleJSON),
     CacheModule.registerAsync({
@@ -52,6 +56,8 @@ import { CacheModule } from '@nestjs/cache-manager';
     RolesModule,
     AuthModule,
     EmailsModule,
+    BooksModule,
+    CategoriesModule,
   ],
   controllers: [AppController],
   providers: [

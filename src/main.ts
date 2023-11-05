@@ -7,9 +7,10 @@ import { AllExceptionsFilter } from './common/exceptions/all_exception';
 async function bootstrap() {
   const { PORT } = process.env;
 
+  // ** initial app
   const api = await NestFactory.create(AppModule, {
     bufferLogs: true,
-    logger: ['error', 'warn'], 
+    logger: ['error', 'warn'],
     cors: true,
   });
 
@@ -21,12 +22,14 @@ async function bootstrap() {
     .setVersion('1.0.0')
     .addBearerAuth()
     .addServer(`http://localhost:${process.env.PORT}`)
+    .addServer(`http://localhost:${process.env.PORT}`)
     .addOAuth2()
     .addBasicAuth()
     .build();
   const document = SwaggerModule.createDocument(api, config);
   SwaggerModule.setup('swagger', api, document);
 
+  // ** exception global scope
   const { httpAdapter } = api.get(HttpAdapterHost);
   api.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
   api.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
@@ -34,6 +37,5 @@ async function bootstrap() {
   await api.listen(PORT, () => {
     console.log(`Server is running on: http://localhost:${PORT}`);
   });
-  // ** end
 }
 bootstrap();
