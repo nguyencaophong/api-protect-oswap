@@ -9,7 +9,7 @@ async function bootstrap() {
 
   const api = await NestFactory.create(AppModule, {
     bufferLogs: true,
-    logger: ['error', 'warn'],
+    logger: ['error', 'warn'], 
     cors: true,
   });
 
