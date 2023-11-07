@@ -4,6 +4,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Book } from './entities/book.entity';
 import { Repository } from 'typeorm';
 import { Category } from 'src/categories/entities/category.entity';
+import {
+  paginate,
+  Pagination,
+  IPaginationOptions,
+} from 'nestjs-typeorm-paginate';
+import { Response } from 'express';
 
 @Injectable()
 export class BooksService {
@@ -52,6 +58,21 @@ export class BooksService {
       throw new NotFoundException('Book not found');
     }
     return book;
+  }
+
+  async findWithPagination(
+    id: number,
+    action: string,
+    path: string,
+    res: Response,
+  ) {
+    const bookPresent = await this.bookRepository
+      .createQueryBuilder(Book.name)
+      .where({ id })
+      .leftJoinAndSelect('Book.categories', Category.name)
+      .getOne();
+
+    return res.redirect(path);
   }
 
   // update(id: number, body: UpdateBookDto): Promise<Book> { }

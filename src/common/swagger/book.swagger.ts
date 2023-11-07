@@ -51,6 +51,29 @@ export const docBookService: SwaggerMethod<BooksController> = {
       ApiOperation({ summary }),
       ApiResponse({
         status: HttpStatus.OK,
+        description: 'Read book price success',
+      }),
+      ApiResponse({
+        status: HttpStatus.BAD_REQUEST,
+        description: 'Bad Request',
+      }),
+      ApiResponse({
+        status: HttpStatus.NOT_FOUND,
+        description: 'Not found book price',
+      }),
+      ApiResponse({
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        description: 'Internal Server Error',
+      }),
+      ApiBearerAuth(),
+    );
+  },
+
+  readBooksWithPagination: (summary: string) => {
+    return applyDecorators(
+      ApiOperation({ summary }),
+      ApiResponse({
+        status: HttpStatus.OK,
         description: 'Update book price success',
       }),
       ApiResponse({

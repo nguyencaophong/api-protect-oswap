@@ -15,6 +15,7 @@ import { redisStore } from 'cache-manager-redis-store';
 import { CacheModule } from '@nestjs/cache-manager';
 import { BooksModule } from './books/books.module';
 import { CategoriesModule } from './categories/categories.module';
+import { CloudinaryModule } from './cloundinary/cloundinary.module';
 
 @Module({
   imports: [
@@ -52,12 +53,17 @@ import { CategoriesModule } from './categories/categories.module';
         port: parseInt(process.env.REDIS_PORT),
       },
     }),
+    // HttpModule.register({
+    //   timeout: 5000,
+    //   maxRedirects: 5,
+    // }),
     UsersModule,
     RolesModule,
     AuthModule,
     EmailsModule,
     BooksModule,
     CategoriesModule,
+    CloudinaryModule,
   ],
   controllers: [AppController],
   providers: [

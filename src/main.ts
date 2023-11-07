@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { AllExceptionsFilter } from './common/exceptions/all_exception';
+import { ReferrerPolicyMiddleware } from './common/cqrs/reffer-policy.middleware';
 
 async function bootstrap() {
   const { PORT } = process.env;
@@ -12,6 +13,10 @@ async function bootstrap() {
     bufferLogs: true,
     logger: ['error', 'warn'],
     cors: true,
+  });
+
+  api.enableCors({
+    origin: 'http://192.168.0.32:4000',
   });
 
   // ** swagger v2

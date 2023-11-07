@@ -1,15 +1,23 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository } from 'typeorm';
 import { User } from './entity/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { HttpService } from '@nestjs/axios';
+import { catchError, firstValueFrom } from 'rxjs';
+import { Book } from 'src/books/entities/book.entity';
+import { AxiosError } from 'axios';
 
 @Injectable()
 export class UsersService {
   constructor(
+    // ** Models
     @InjectRepository(User)
     private userRepository: Repository<User>,
+
+    // ** Services
+    private readonly httpService: HttpService,
   ) { }
 
   async create(body: CreateUserDto) {
