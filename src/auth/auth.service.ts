@@ -61,8 +61,11 @@ export class AuthService {
       throw new BadRequestException('Username or password not incorrect');
     }
 
-    if (hasUserExits) return hasUserExits;
-    else return null;
+    if (!hasUserExits.isActive) {
+      throw new BadRequestException("Your account has been blocked. Please contact the administrator to open")
+    }
+
+    return hasUserExits
   }
 
   async login(req): Promise<{ accessToken: string; refreshToken: string }> {
