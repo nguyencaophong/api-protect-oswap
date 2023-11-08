@@ -22,6 +22,7 @@ import { throttlerOptions } from 'src/common/constants';
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
+  @Throttle(throttlerOptions['short'])
   @UseGuards(LocalAuthGuard)
   @docAuthService.login('Login user')
   @Post('login')

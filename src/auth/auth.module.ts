@@ -9,10 +9,15 @@ import { LocalStrategy } from './strategies/local.strategy';
 import { JwtAuthStrategies } from './strategies/jwt-at.strategy';
 import { JwtAuthGuard, LocalAuthGuard } from 'src/common/guards';
 import { EmailsModule } from 'src/emails/emails.module';
+import { BullModule } from '@nestjs/bull';
+import { EQueueName } from 'src/common/enum';
+import { AuthConsumer } from './consumers/auth.consumer';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User]), BullModule.registerQueue({
+      name: EQueueName.RESET_STATUS_LOGIN,
+    }),
     JwtModule,
     PassportModule,
     EmailsModule,
@@ -24,6 +29,7 @@ import { EmailsModule } from 'src/emails/emails.module';
     JwtAuthStrategies,
     LocalAuthGuard,
     JwtAuthGuard,
+    AuthConsumer
   ],
 })
 export class AuthModule { }

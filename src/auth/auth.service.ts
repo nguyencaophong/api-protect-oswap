@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -10,11 +11,18 @@ import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { ResetPasswordDto } from './dto';
-import { isEmail, isPhone } from 'src/common/utils';
+import { isEmail, isPhone, toString } from 'src/common/utils';
 import { EmailsService } from 'src/emails/emails.service';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
+import { EKeyPrefixRedis, EQueueName } from 'src/common/enum';
+import { Queue } from 'bull';
+import { InjectQueue } from '@nestjs/bull';
 
 @Injectable()
 export class AuthService {
+  private static POSSIBLE_LOGIN_ATTEMPTS = 5;
+  private static LOGIN_STATUS_RESET_TIME = 300000;
   constructor(
     // ** Models
     @InjectRepository(User)
@@ -24,6 +32,13 @@ export class AuthService {
     private configService: ConfigService,
     private jwtService: JwtService,
     private emailService: EmailsService,
+
+    // ** Redis 
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+
+    // ** Bull-Queue
+    @InjectQueue(EQueueName.RESET_STATUS_LOGIN)
+    private resetStatusLoginQueue: Queue,
   ) { }
 
   async genTokens(payload: { id: number }) {
@@ -53,11 +68,22 @@ export class AuthService {
       throw new NotFoundException('Account not exits');
     }
 
+    const numberLoginFailed = await this.cacheManager.get<number>(toString(`${hasUserExits.id}-${EKeyPrefixRedis.LOGIN_FAILED}`)) || 0;
+    if (numberLoginFailed + 1 === AuthService.POSSIBLE_LOGIN_ATTEMPTS + 1) {
+      throw new BadRequestException('Entered incorrectly more than 5 times. Please wait 5 minutes and try again')
+    }
+
     const isValidPassword = await bcrypt.compare(
       password,
       hasUserExits.password,
     );
     if (!isValidPassword) {
+      await this.cacheManager.set(toString(`${hasUserExits.id}-${EKeyPrefixRedis.LOGIN_FAILED}`), numberLoginFailed + 1)
+      if (numberLoginFailed + 1 === AuthService.POSSIBLE_LOGIN_ATTEMPTS) {
+        this.resetStatusLoginQueue.add('reset-status-login',
+          { id: hasUserExits.id },
+          { delay: AuthService.LOGIN_STATUS_RESET_TIME, removeOnComplete: true })
+      }
       throw new BadRequestException('Username or password not incorrect');
     }
 
