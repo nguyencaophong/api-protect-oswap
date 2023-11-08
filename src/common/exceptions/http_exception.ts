@@ -16,7 +16,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const status = exception.getStatus();
 
     if (exception instanceof QueryFailedError) {
-      console.log('T');
     }
     response.status(status).json({
       statusCode: status,

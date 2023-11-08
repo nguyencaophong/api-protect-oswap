@@ -82,6 +82,7 @@ export class BooksController {
   }
 
   @docBookService.findAll('Get list boos')
+  @UseGuards(JwtAuthGuard)
   @Get()
   findAll() {
     return this.booksService.findAll();
@@ -103,7 +104,7 @@ export class BooksController {
   readBooksWithPagination(
     @Param('id', ParseIntPipe) id: number,
     @Param('action', ParseActionPipe) action: string,
-    @ValidPath(new PathValidationPipe()) path: string,
+    @Query('path', PathValidationPipe) path: string,
     @Res() res: Response,
   ) {
     return this.booksService.findWithPagination(+id, action, path, res);

@@ -66,7 +66,6 @@ export class BooksService {
     path: string,
     res: Response,
   ) {
-    console.log(path);
     return res.redirect(path);
   }
 

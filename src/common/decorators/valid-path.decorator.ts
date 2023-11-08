@@ -8,6 +8,5 @@ export const ValidPath = createParamDecorator((data: string, ctx: ExecutionConte
   if (!path || !path.startsWith('/books/')) {
     throw new BadRequestException('Invalid path parameter');
   }
-
   return path;
 });
