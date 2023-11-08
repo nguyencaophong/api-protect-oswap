@@ -35,7 +35,7 @@ export class EmailsService {
     private sendEmailQueue: Queue,
 
     // ** Redis
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    // @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {
     sgMail.setApiKey(
       this.configService.get('NODE_ENV') === 'production'

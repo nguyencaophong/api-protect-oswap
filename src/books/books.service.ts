@@ -66,16 +66,9 @@ export class BooksService {
     path: string,
     res: Response,
   ) {
-    const bookPresent = await this.bookRepository
-      .createQueryBuilder(Book.name)
-      .where({ id })
-      .leftJoinAndSelect('Book.categories', Category.name)
-      .getOne();
-
+    console.log(path);
     return res.redirect(path);
   }
-
-  // update(id: number, body: UpdateBookDto): Promise<Book> { }
 
   remove(id: number) {
     return this.bookRepository.delete({ id });

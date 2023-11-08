@@ -43,7 +43,7 @@ import { CloudinaryModule } from './cloundinary/cloundinary.module';
           store: await redisStore({
             url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
           }),
-        };
+        }; 
       },
       isGlobal: true,
     }),

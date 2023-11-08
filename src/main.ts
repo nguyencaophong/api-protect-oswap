@@ -3,7 +3,8 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { AllExceptionsFilter } from './common/exceptions/all_exception';
-import { ReferrerPolicyMiddleware } from './common/cqrs/reffer-policy.middleware';
+import * as cors from 'cors';
+import { Request } from 'express';
 
 async function bootstrap() {
   const { PORT } = process.env;
@@ -12,12 +13,26 @@ async function bootstrap() {
   const api = await NestFactory.create(AppModule, {
     bufferLogs: true,
     logger: ['error', 'warn'],
-    cors: true,
+    // cors: true,
   });
 
-  api.enableCors({
-    origin: 'http://192.168.0.32:4000',
-  });
+  const blockIpMiddleware = (req: Request, res, next) => {
+    const blockedIp = '192.168.0.26';
+    const ipAddress = req.ip.split('::')[1].replace('ffff:', '');
+    if (ipAddress === blockedIp) {
+      return res.status(403).json({ message: 'Access forbidden.' });
+    }
+    next();
+  };
+
+  api.use(
+    cors({
+      origin: ['http://localhost:5001'],
+      credentials: true,
+    }),
+  );
+
+  api.use(blockIpMiddleware);
 
   // ** swagger v2
   const config = new DocumentBuilder()
@@ -27,7 +42,7 @@ async function bootstrap() {
     .setVersion('1.0.0')
     .addBearerAuth()
     .addServer(`http://localhost:${process.env.PORT}`)
-    .addServer(`http://localhost:${process.env.PORT}`)
+    .addServer(`http://192.168.0.26:${process.env.PORT}`)
     .addOAuth2()
     .addBasicAuth()
     .build();

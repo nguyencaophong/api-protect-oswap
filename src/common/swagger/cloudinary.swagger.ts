@@ -22,4 +22,23 @@ export const docCloundinaryService: SwaggerMethod<CloudinaryController> = {
       ApiBearerAuth(),
     );
   },
+
+  getImageInfoFromUrl: (summary: string) => {
+    return applyDecorators(
+      ApiOperation({ summary }),
+      ApiResponse({
+        status: HttpStatus.CREATED,
+        description: 'Created book price success',
+      }),
+      ApiResponse({
+        status: HttpStatus.BAD_REQUEST,
+        description: 'Bad Request',
+      }),
+      ApiResponse({
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        description: 'Internal Server Error',
+      }),
+      ApiBearerAuth(),
+    );
+  },
 };

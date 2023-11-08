@@ -10,7 +10,6 @@ import {
   UseGuards,
   ParseIntPipe,
   Query,
-  Req,
   Res,
 } from '@nestjs/common';
 import { BooksService } from './books.service';
@@ -20,9 +19,9 @@ import { ApiBody, ApiConsumes, ApiParam, ApiTags } from '@nestjs/swagger';
 import { docBookService } from 'src/common/swagger/book.swagger';
 import { ApiFiles } from 'src/common/interceptors/api-files.interceptor';
 import { JwtAuthGuard, RolesGuard } from 'src/common/guards';
-import { Roles } from 'src/common/decorators';
+import { Roles, ValidPath } from 'src/common/decorators';
 import { EActionGetBook, ERoleDefault } from 'src/common/enum';
-import { ParseActionPipe } from 'src/common/pipes';
+import { ParseActionPipe, PathValidationPipe } from 'src/common/pipes';
 import { Response } from 'express';
 
 @ApiTags('Books')
@@ -104,7 +103,7 @@ export class BooksController {
   readBooksWithPagination(
     @Param('id', ParseIntPipe) id: number,
     @Param('action', ParseActionPipe) action: string,
-    @Query('path') path: string,
+    @ValidPath(new PathValidationPipe()) path: string,
     @Res() res: Response,
   ) {
     return this.booksService.findWithPagination(+id, action, path, res);
