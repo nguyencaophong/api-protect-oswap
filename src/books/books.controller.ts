@@ -19,7 +19,7 @@ import { ApiBody, ApiConsumes, ApiParam, ApiTags } from '@nestjs/swagger';
 import { docBookService } from 'src/common/swagger/book.swagger';
 import { ApiFiles } from 'src/common/interceptors/api-files.interceptor';
 import { JwtAuthGuard, RolesGuard } from 'src/common/guards';
-import { Roles, ValidPath } from 'src/common/decorators';
+import { Roles } from 'src/common/decorators';
 import { EActionGetBook, ERoleDefault } from 'src/common/enum';
 import { ParseActionPipe, PathValidationPipe } from 'src/common/pipes';
 import { Response } from 'express';

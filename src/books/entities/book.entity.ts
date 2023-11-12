@@ -41,8 +41,8 @@ export class Book {
   @Column('simple-array')
   images: string[];
 
-  @ManyToMany(() => Category, (category) => category.books, {
-    onDelete: 'CASCADE',
-  })
-  categories: Category[];
+  // @ManyToMany(() => Category, (category) => category.books, {
+  //   onDelete: 'CASCADE',
+  // })
+  // categories: Category[];
 }

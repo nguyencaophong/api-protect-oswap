@@ -29,20 +29,20 @@ export class CategoriesController {
     return this.categoriesService.create(req, body);
   }
 
-  @Put(':id/add-books/:bookId')
-  @docCategoryService.create('Add book into category ')
-  addBook(
-    @Req() req,
-    @Param('id') id: number,
-    @Param('bookId') bookId: number,
-  ) {
-    return this.categoriesService.addBook(req, id, bookId);
-  }
+  // @Put(':id/add-books/:bookId')
+  // @docCategoryService.create('Add book into category ')
+  // addBook(
+  //   @Req() req,
+  //   @Param('id') id: number,
+  //   @Param('bookId') bookId: number,
+  // ) {
+  //   return this.categoriesService.addBook(req, id, bookId);
+  // }
 
   @Get()
   @docCategoryService.findAll('Get list category myself ')
-  findAll(@Req() req) {
-    return this.categoriesService.findAll(req);
+  findAll() {
+    return this.categoriesService.findAll();
   }
 
   @Get(':id')

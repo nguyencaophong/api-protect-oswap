@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Book } from 'src/books/entities/book.entity';
+import { Product } from 'src/products/entities/product.entity';
 import { User } from 'src/users/entity/user.entity';
 import {
   Column,
@@ -7,6 +8,7 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -28,7 +30,10 @@ export class Category {
   @ManyToOne(() => User, (user) => user.categories)
   creator: User;
 
-  @ManyToMany(() => Book, (book) => book.categories)
-  @JoinTable()
-  books: Book[];
+  // @ManyToMany(() => Book, (book) => book.categories)
+  // @JoinTable()
+  // books: Book[];
+
+  @OneToMany(() => Product, (product) => product.category)
+  products: Product[];
 }

@@ -1,15 +1,15 @@
 import { HttpStatus, applyDecorators } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { SwaggerMethod } from '../types';
-import { CategoriesController } from 'src/categories/categories.controller';
+import { OrdersController } from 'src/orders/orders.controller';
 
-export const docCategoryService: SwaggerMethod<CategoriesController> = {
+export const docOrderService: SwaggerMethod<OrdersController> = {
   create: (summary: string) => {
     return applyDecorators(
       ApiOperation({ summary }),
       ApiResponse({
         status: HttpStatus.CREATED,
-        description: 'Created category price success',
+        description: 'Created book price success',
       }),
       ApiResponse({
         status: HttpStatus.BAD_REQUEST,
@@ -28,7 +28,7 @@ export const docCategoryService: SwaggerMethod<CategoriesController> = {
       ApiOperation({ summary }),
       ApiResponse({
         status: HttpStatus.OK,
-        description: 'Get category price success',
+        description: 'Get book price success',
       }),
       ApiResponse({
         status: HttpStatus.BAD_REQUEST,
@@ -36,7 +36,7 @@ export const docCategoryService: SwaggerMethod<CategoriesController> = {
       }),
       ApiResponse({
         status: HttpStatus.NOT_FOUND,
-        description: 'Not found category price',
+        description: 'Not found book price',
       }),
       ApiResponse({
         status: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -51,7 +51,7 @@ export const docCategoryService: SwaggerMethod<CategoriesController> = {
       ApiOperation({ summary }),
       ApiResponse({
         status: HttpStatus.OK,
-        description: 'Update category price success',
+        description: 'Read book price success',
       }),
       ApiResponse({
         status: HttpStatus.BAD_REQUEST,
@@ -59,7 +59,7 @@ export const docCategoryService: SwaggerMethod<CategoriesController> = {
       }),
       ApiResponse({
         status: HttpStatus.NOT_FOUND,
-        description: 'Not found category price',
+        description: 'Not found book price',
       }),
       ApiResponse({
         status: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -74,7 +74,7 @@ export const docCategoryService: SwaggerMethod<CategoriesController> = {
       ApiOperation({ summary }),
       ApiResponse({
         status: HttpStatus.OK,
-        description: 'Delete category price success',
+        description: 'Delete book price success',
       }),
       ApiResponse({
         status: HttpStatus.BAD_REQUEST,
@@ -82,7 +82,7 @@ export const docCategoryService: SwaggerMethod<CategoriesController> = {
       }),
       ApiResponse({
         status: HttpStatus.NOT_FOUND,
-        description: 'Not found category price',
+        description: 'Not found book price',
       }),
       ApiResponse({
         status: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -92,35 +92,12 @@ export const docCategoryService: SwaggerMethod<CategoriesController> = {
     );
   },
 
-  // addBook: (summary: string) => {
-  //   return applyDecorators(
-  //     ApiOperation({ summary }),
-  //     ApiResponse({
-  //       status: HttpStatus.OK,
-  //       description: 'Add book into category',
-  //     }),
-  //     ApiResponse({
-  //       status: HttpStatus.BAD_REQUEST,
-  //       description: 'Bad Request',
-  //     }),
-  //     ApiResponse({
-  //       status: HttpStatus.NOT_FOUND,
-  //       description: 'Not found category price',
-  //     }),
-  //     ApiResponse({
-  //       status: HttpStatus.INTERNAL_SERVER_ERROR,
-  //       description: 'Internal Server Error',
-  //     }),
-  //     ApiBearerAuth(),
-  //   );
-  // },
-
   update: (summary: string) => {
     return applyDecorators(
       ApiOperation({ summary }),
       ApiResponse({
         status: HttpStatus.OK,
-        description: 'Delete category price success',
+        description: 'Delete book price success',
       }),
       ApiResponse({
         status: HttpStatus.BAD_REQUEST,
@@ -128,7 +105,7 @@ export const docCategoryService: SwaggerMethod<CategoriesController> = {
       }),
       ApiResponse({
         status: HttpStatus.NOT_FOUND,
-        description: 'Not found category price',
+        description: 'Not found book price',
       }),
       ApiResponse({
         status: HttpStatus.INTERNAL_SERVER_ERROR,

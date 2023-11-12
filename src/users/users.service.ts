@@ -28,6 +28,7 @@ export class UsersService {
     user.address = body.address;
     user.sex = body.sex;
     user.username = body.username;
+    user.role = body.role;
 
     return this.userRepository.save(user);
   }

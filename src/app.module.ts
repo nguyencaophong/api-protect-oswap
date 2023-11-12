@@ -16,6 +16,8 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { BooksModule } from './books/books.module';
 import { CategoriesModule } from './categories/categories.module';
 import { CloudinaryModule } from './cloundinary/cloundinary.module';
+import { OrdersModule } from './orders/orders.module';
+import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [
@@ -43,7 +45,7 @@ import { CloudinaryModule } from './cloundinary/cloundinary.module';
           store: await redisStore({
             url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
           }),
-        }; 
+        };
       },
       isGlobal: true,
     }),
@@ -53,17 +55,15 @@ import { CloudinaryModule } from './cloundinary/cloundinary.module';
         port: parseInt(process.env.REDIS_PORT),
       },
     }),
-    // HttpModule.register({
-    //   timeout: 5000,
-    //   maxRedirects: 5,
-    // }),
     UsersModule,
     RolesModule,
     AuthModule,
     EmailsModule,
-    BooksModule,
+    // BooksModule,
     CategoriesModule,
     CloudinaryModule,
+    OrdersModule,
+    ProductsModule,
   ],
   controllers: [AppController],
   providers: [

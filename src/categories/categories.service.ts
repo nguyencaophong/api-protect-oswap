@@ -9,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from './entities/category.entity';
 import { EntityManager, Repository } from 'typeorm';
 import { Book } from 'src/books/entities/book.entity';
+import { Product } from 'src/products/entities/product.entity';
 
 @Injectable()
 export class CategoriesService {
@@ -35,39 +36,36 @@ export class CategoriesService {
   }
 
   async addBook(req, id: number, bookId: number): Promise<any> {
-    const hasBookExits = await this.bookRepository.findOneBy({ id: bookId });
-    if (!hasBookExits) {
-      throw new NotFoundException('Book not found');
-    }
-
-    const hasCategoryExits = await this.categoryRepository
-      .createQueryBuilder(Category.name)
-      .leftJoinAndSelect('Category.books', Book.name)
-      .getOne();
-    if (!hasCategoryExits) {
-      throw new NotFoundException('Category not found');
-    }
-
-    const hasBookExitsInCategory = hasCategoryExits.books.find(
-      (book) => book.id === bookId,
-    );
-    if (hasBookExitsInCategory) {
-      throw new BadRequestException('Book exits in category');
-    }
-
-    hasCategoryExits.books = hasCategoryExits.books.concat([hasBookExits]);
-    return this.categoryRepository.save(hasCategoryExits);
+    // const hasBookExits = await this.bookRepository.findOneBy({ id: bookId });
+    // if (!hasBookExits) {
+    //   throw new NotFoundException('Book not found');
+    // }
+    // const hasCategoryExits = await this.categoryRepository
+    //   .createQueryBuilder(Category.name)
+    //   .leftJoinAndSelect('Category.books', Book.name)
+    //   .getOne();
+    // if (!hasCategoryExits) {
+    //   throw new NotFoundException('Category not found');
+    // }
+    // const hasBookExitsInCategory = hasCategoryExits.books.find(
+    //   (book) => book.id === bookId,
+    // );
+    // if (hasBookExitsInCategory) {
+    //   throw new BadRequestException('Book exits in category');
+    // }
+    // hasCategoryExits.books = hasCategoryExits.books.concat([hasBookExits]);
+    // return this.categoryRepository.save(hasCategoryExits);
   }
 
-  findAll(req): Promise<Category[]> {
-    return this.categoryRepository.findBy({ creator: req.user.id });
+  findAll(): Promise<Category[]> {
+    return this.categoryRepository.find();
   }
 
   findOne(id: number): Promise<Category> {
     return this.categoryRepository
       .createQueryBuilder(Category.name)
       .where({ id })
-      .leftJoinAndSelect('Category.books', Book.name)
+      .leftJoinAndSelect('Category.products', Product.name)
       .getOne();
   }
 

@@ -4,6 +4,7 @@ import { ESex } from '../enum/sex.enum';
 import { TAddress } from '../types';
 import { ERoleDefault } from 'src/common/enum';
 import { Category } from 'src/categories/entities/category.entity';
+import { Order } from 'src/orders/entities/order.entity';
 
 @Entity()
 export class User {
@@ -49,4 +50,7 @@ export class User {
 
   @OneToMany(() => Category, (category) => category.creator)
   categories: Category[];
+
+  @OneToMany(() => Order, (order) => order.user)
+  orders: Order[];
 }
