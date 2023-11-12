@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { Category } from 'src/categories/entities/category.entity';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+import { EREdisKeyPrefix } from 'src/common/enum';
 
 @Injectable()
 export class ProductsService {
@@ -36,9 +37,9 @@ export class ProductsService {
     product.quantity = body.quantity;
     product.category = category;
     product.inventory = body.quantity;
+    product.max_number_sell = body.max_number_sell;
 
     const newProduct = await this.productRepository.save(product);
-
     return newProduct;
   }
 

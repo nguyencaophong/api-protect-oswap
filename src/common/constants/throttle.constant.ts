@@ -17,4 +17,10 @@ export const throttlerOptions: Record<string, any> = {
       ttl: 60000,
     },
   },
+  order: {
+    order: {
+      limit: 7,
+      ttl: 10000,
+    },
+  },
 };

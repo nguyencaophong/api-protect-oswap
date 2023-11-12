@@ -13,5 +13,10 @@
         "name": "long",
         "limit": 500,
         "ttl": 60000
+    },
+    {
+        "name": "order",
+        "limit": 7,
+        "ttl": 10000
     }
 ]

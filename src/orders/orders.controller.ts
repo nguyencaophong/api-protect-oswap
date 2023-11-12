@@ -15,6 +15,8 @@ import { UpdateOrderDto } from './dto/update-order.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/common/guards';
 import { docOrderService } from 'src/common/swagger';
+import { Throttle } from '@nestjs/throttler';
+import { throttlerOptions } from 'src/common/constants';
 
 ApiTags('Orders');
 @Controller('orders')
@@ -23,6 +25,7 @@ export class OrdersController {
 
   @UseGuards(JwtAuthGuard)
   @docOrderService.create('Create order')
+  @Throttle(throttlerOptions['order'])
   @Post()
   create(@Req() req, @Body() body: CreateOrderDto) {
     return this.ordersService.create(req, body);

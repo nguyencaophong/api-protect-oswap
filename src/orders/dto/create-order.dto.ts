@@ -8,6 +8,8 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import { toNumber } from 'src/common/utils';
+import { isCodeVerify } from 'src/common/constants';
+import { MatchRegex } from 'src/common/decorators';
 
 type TListProduct = {
   productId: number;
@@ -29,4 +31,8 @@ export class CreateOrderDto {
   @ValidateNested({ each: true })
   @Type(() => ProductItemDto)
   products: TListProduct[];
+
+  @ApiProperty({ example: '534233' })
+  @MatchRegex(isCodeVerify, { message: 'Code verify include 6 numeric' })
+  code: string;
 }

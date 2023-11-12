@@ -1,20 +1,21 @@
+import { Process, Processor } from '@nestjs/bull';
+import { EQueueName } from 'src/common/enum';
+import { Job } from 'bull';
+import { ConfigService } from '@nestjs/config';
 import {
   BadRequestException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
-import { Order } from './entities/order.entity';
 import { Product } from 'src/products/entities/product.entity';
-import { OrderDetail } from './entities/order-detail.entity';
-import { ConfigService } from '@nestjs/config';
 import { EmailsService } from 'src/emails/emails.service';
+import { Order } from '../entities/order.entity';
+import { OrderDetail } from '../entities/order-detail.entity';
 
-@Injectable()
-export class OrdersService {
+@Processor(EQueueName.SEND_ORDER)
+export class OrderConsumer {
   constructor(
     // ** Models
     @InjectRepository(Order)
@@ -32,22 +33,21 @@ export class OrdersService {
     private dataSource: DataSource,
   ) { }
 
-  async create(req, body: CreateOrderDto) {
+  @Process('register')
+  async sendOrder(job: Job<{ products; user }>) {
+    const { products, user } = job.data;
     const queryRunner = await this.dataSource.createQueryRunner();
     const listOrderDetail: OrderDetail[] = [];
     const order = new Order();
 
-    // ** verify code
-    await this.emailService.verify(req.user.username, body.code);
+    // ** start transaction
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
     try {
-      // ** start transaction
-      await queryRunner.connect();
-      await queryRunner.startTransaction();
-
       // ** validate products truth
-      for (const product of body.products) {
-        const productFond = await queryRunner.manager.findOneBy(Product, {
+      for (const product of products) {
+        const productFond = await this.productRepository.findOneBy({
           id: product.productId,
         });
         if (!productFond) {
@@ -96,7 +96,6 @@ export class OrdersService {
           { id: product.productId },
           { inventory: productFond.inventory - product.quantity },
         );
-
         // ** create list order detail
         const orderDetail = new OrderDetail();
         orderDetail.product = productFond;
@@ -106,7 +105,7 @@ export class OrdersService {
       }
 
       // ** create new order
-      order.user = req.user;
+      order.user = user;
       order.orderDetails = listOrderDetail;
       order.dateCreated = new Date();
       const newOrder = await queryRunner.manager.save(order);
@@ -114,32 +113,12 @@ export class OrdersService {
       // commit transaction
       await queryRunner.commitTransaction();
 
-      return { ...newOrder, user: req.user.id };
+      return { ...newOrder, user: user.id };
     } catch (error) {
       await queryRunner.rollbackTransaction();
       throw error;
     } finally {
       await queryRunner.release();
     }
-  }
-
-  findAll(req): Promise<Order[]> {
-    return this.orderRepository.findBy({ user: req.user.id });
-  }
-
-  async findOne(id: number): Promise<any> {
-    return await this.orderDetailRepository
-      .createQueryBuilder(OrderDetail.name)
-      .where({ order: id })
-      .leftJoinAndSelect('OrderDetail.product', Product.name)
-      .getMany();
-  }
-
-  update(id: number, updateOrderDto: UpdateOrderDto) {
-    return `This action updates a #${id} order`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} order`;
   }
 }

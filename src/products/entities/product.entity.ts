@@ -40,6 +40,11 @@ export class Product {
   @IsNotEmpty()
   inventory: number;
 
+  @ApiProperty()
+  @Column({ default: 0 })
+  @IsNotEmpty()
+  max_number_sell: number;
+
   @ManyToOne(() => Category, (category) => category.products)
   @IsNotEmpty()
   category: Category;

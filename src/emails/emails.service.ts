@@ -32,11 +32,9 @@ export class EmailsService {
 
     // ** Bull-Queue
     @InjectQueue(EQueueName.SEND_EMAIL_QUEUE)
-    private sendEmailQueue: Queue,
-
-    // ** Redis
-    // @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) {
+    private sendEmailQueue: Queue, // ** Redis
+  ) // @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  {
     sgMail.setApiKey(
       this.configService.get('NODE_ENV') === 'production'
         ? this.configService.get('MAILER_KEY')
@@ -86,6 +84,7 @@ export class EmailsService {
 
     const verifyCode = await bcrypt.compare(code, mail.code);
     if (verifyCode) {
+      console.log('T', email);
       await this.emailRepository.delete({ email });
       return;
     } else {
