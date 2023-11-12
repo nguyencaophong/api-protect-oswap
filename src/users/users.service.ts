@@ -1,13 +1,13 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository } from 'typeorm';
 import { User } from './entity/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { HttpService } from '@nestjs/axios';
-import { catchError, firstValueFrom } from 'rxjs';
-import { Book } from 'src/books/entities/book.entity';
-import { AxiosError } from 'axios';
+import { Order } from 'src/orders/entities/order.entity';
+import { Product } from 'src/products/entities/product.entity';
+import { OrderDetail } from 'src/orders/entities/order-detail.entity';
 
 @Injectable()
 export class UsersService {
@@ -15,6 +15,12 @@ export class UsersService {
     // ** Models
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(Order)
+    private orderRepository: Repository<Order>,
+    @InjectRepository(Product)
+    private productRepository: Repository<Product>,
+    @InjectRepository(OrderDetail)
+    private orderDetailRepository: Repository<OrderDetail>,
 
     // ** Services
     private readonly httpService: HttpService,
@@ -50,6 +56,12 @@ export class UsersService {
   async readMyself(req) {
     const user = await this.userRepository.findOneBy({ id: req.user._id });
     return user;
+  }
+
+  async readProductsMyself(req) {
+    const productsMyself = await this.orderRepository
+      .createQueryBuilder('order')
+      .where({ user: req.user.id });
   }
 
   update(id: number, body: UpdateUserDto) {

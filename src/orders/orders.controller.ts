@@ -31,8 +31,8 @@ export class OrdersController {
   @UseGuards(JwtAuthGuard)
   @docOrderService.create('get list order')
   @Get()
-  findAll() {
-    return this.ordersService.findAll();
+  findAll(@Req() req) {
+    return this.ordersService.findAll(req);
   }
 
   @UseGuards(JwtAuthGuard)

@@ -15,14 +15,17 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { docCategoryService } from 'src/common/swagger/category.swagger';
-import { JwtAuthGuard } from 'src/common/guards';
+import { JwtAuthGuard, RolesGuard } from 'src/common/guards';
+import { Roles } from 'src/common/decorators';
+import { ERoleDefault } from 'src/common/enum';
 
 @ApiTags('Category')
-@UseGuards(JwtAuthGuard)
 @Controller('categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) { }
 
+  @Roles([ERoleDefault.ADMIN, ERoleDefault.ROOT])
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post()
   @docCategoryService.create('Create category ')
   create(@Req() req, @Body() body: CreateCategoryDto) {
@@ -39,24 +42,30 @@ export class CategoriesController {
   //   return this.categoriesService.addBook(req, id, bookId);
   // }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   @docCategoryService.findAll('Get list category myself ')
   findAll() {
     return this.categoriesService.findAll();
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   @docCategoryService.findOne('Get category by id')
   findOne(@Param('id') id: string) {
     return this.categoriesService.findOne(+id);
   }
 
+  @Roles([ERoleDefault.ADMIN, ERoleDefault.ROOT])
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch(':id')
   @docCategoryService.update('Update category by id')
   update(@Param('id') id: string, @Body() body: UpdateCategoryDto) {
     return this.categoriesService.update(+id, body);
   }
 
+  @Roles([ERoleDefault.ADMIN, ERoleDefault.ROOT])
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete(':id')
   @docCategoryService.remove('Remove category by id')
   remove(@Param('id') id: string) {

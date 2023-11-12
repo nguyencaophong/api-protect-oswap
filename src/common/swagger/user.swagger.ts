@@ -93,7 +93,29 @@ export const docUserService: SwaggerMethod<UsersController> = {
       ApiOperation({ summary }),
       ApiResponse({
         status: HttpStatus.OK,
-        description: 'Delete user price success',
+        description: 'Read info myself',
+      }),
+      ApiResponse({
+        status: HttpStatus.BAD_REQUEST,
+        description: 'Bad Request',
+      }),
+      ApiResponse({
+        status: HttpStatus.NOT_FOUND,
+        description: 'Not found user price',
+      }),
+      ApiResponse({
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        description: 'Internal Server Error',
+      }),
+    );
+  },
+
+  productsMyself: (summary: string) => {
+    return applyDecorators(
+      ApiOperation({ summary }),
+      ApiResponse({
+        status: HttpStatus.OK,
+        description: 'Get list products myself',
       }),
       ApiResponse({
         status: HttpStatus.BAD_REQUEST,

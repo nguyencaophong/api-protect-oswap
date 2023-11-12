@@ -85,12 +85,16 @@ export class OrdersService {
     }
   }
 
-  findAll() {
-    return `This action returns all orders`;
+  findAll(req): Promise<Order[]> {
+    return this.orderRepository.findBy({ user: req.user.id });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} order`;
+  async findOne(id: number): Promise<any> {
+    return await this.orderDetailRepository
+      .createQueryBuilder(OrderDetail.name)
+      .where({ order: id })
+      .leftJoinAndSelect('OrderDetail.product', Product.name)
+      .getMany();
   }
 
   update(id: number, updateOrderDto: UpdateOrderDto) {

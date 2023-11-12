@@ -67,6 +67,14 @@ export class UsersController {
   }
 
   @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Get('products-myself')
+  @docUserService.readMYself('read info myself')
+  productsMyself(@Req() req) {
+    return this.usersService.readProductsMyself(req);
+  }
+
+  @ApiBearerAuth()
   @Roles([ERoleDefault.ADMIN, ERoleDefault.ROOT])
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch(':id')
