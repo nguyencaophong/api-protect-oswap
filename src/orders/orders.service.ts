@@ -71,22 +71,23 @@ export class OrdersService {
 
         // ** check count order in time define
         const hoursAgoCheck = new Date();
-        hoursAgoCheck.setHours(
-          hoursAgoCheck.getHours() -
-          this.configService.get<number>('MAX_TRANSACTION_TIME_HOURS'),
+        const maxNumberTransaction = this.configService.get<number>(
+          'MAX_NUMBER_TRANSACTION',
         );
+        const maxTimeTransaction = this.configService.get<number>('MAX_TRANSACTION_TIME_HOURS');
+
+        hoursAgoCheck.setHours(
+          hoursAgoCheck.getHours() - maxTimeTransaction,
+        );
+
         const countOrder = await this.orderRepository
           .createQueryBuilder('order')
           .where('order.dateCreated >= :hoursAgoCheck', { hoursAgoCheck })
           .getCount();
-        const maxNumberTransaction = this.configService.get<number>(
-          'MAX_NUMBER_TRANSACTION',
-        );
+
         if (countOrder > maxNumberTransaction) {
           throw new BadRequestException(
-            `You have exceeded your purchase count. Please try again after ${this.configService.get<string>(
-              'MAX_TRANSACTION_TIME_HOURS',
-            )} hours`,
+            `You have exceeded your purchase count. Please try again after ${maxTimeTransaction} hours`,
           );
         }
 
