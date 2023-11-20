@@ -6,7 +6,7 @@ import { AllExceptionsFilter } from './common/exceptions/all_exception';
 import * as cors from 'cors';
 import { Request } from 'express';
 
-async function bootstrap() {
+async function bootstrap() { 
   const { PORT } = process.env;
 
   // ** initial app
@@ -22,15 +22,8 @@ async function bootstrap() {
     if (ipAddress === blockedIp) {
       return res.status(403).json({ message: 'Access forbidden.' });
     }
-    next();
+    next(); 
   };
-
-  api.use(
-    cors({
-      origin: ['http://localhost:5001'],
-      credentials: true,
-    }),
-  );
 
   api.use(blockIpMiddleware);
 
@@ -42,9 +35,10 @@ async function bootstrap() {
     .setVersion('1.0.0')
     .addBearerAuth()
     .addServer(`http://localhost:${process.env.PORT}`)
+    .addServer(`http://localhost:88`)
     .addServer(`http://192.168.0.26:${process.env.PORT}`)
     .addOAuth2()
-    .addBasicAuth()
+    .addBasicAuth() 
     .build();
   const document = SwaggerModule.createDocument(api, config);
   SwaggerModule.setup('swagger', api, document);

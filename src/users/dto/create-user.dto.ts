@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsObject, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsNumber, IsObject, IsOptional, IsString } from 'class-validator';
 import { TAddress } from '../types';
 import { ESex } from '../enum';
 import { Transform } from 'class-transformer';
-import { toLowerCase, trim } from 'src/common/utils';
+import { toLowerCase, toNumber, trim } from 'src/common/utils';
 import { IsValidUsername } from 'src/common/decorators';
 import { ERoleDefault } from 'src/common/enum';
 
@@ -43,7 +43,8 @@ export class CreateUserDto {
   @IsEnum(ESex)
   sex: string;
 
-  @ApiProperty({ type: 'enum', enum: ERoleDefault })
-  @IsEnum(ERoleDefault)
-  role: string;
+  @ApiProperty({ type: 'number', example: 1 })
+  @Transform(({ value }) => toNumber(value))
+  @IsNumber()
+  role: number;
 }

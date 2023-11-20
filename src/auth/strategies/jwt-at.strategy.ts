@@ -24,10 +24,12 @@ export class JwtAuthStrategies extends PassportStrategy(Strategy, 'jwt-auth') {
   }
 
   async validate(payload: any): Promise<any> {
-    const [user] = await this.userRepository.findBy({ id: payload.id });
+    const user = await this.userRepository.createQueryBuilder("user")
+      .where({ id: payload.id })
+      .leftJoinAndSelect("user.role", "role").getOne();
     if (!user) {
       throw new NotFoundException('Account does not exist');
     }
-    return { ...user, roles: ['User'] };
+    return { ...user };
   }
 }

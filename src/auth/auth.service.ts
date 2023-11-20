@@ -52,7 +52,6 @@ export class AuthService {
     if (!hasUserExits) {
       throw new NotFoundException('Account not exits');
     }
-
     const isValidPassword = await bcrypt.compare(
       password,
       hasUserExits.password,
@@ -66,6 +65,7 @@ export class AuthService {
   }
 
   async login(req): Promise<{ accessToken: string; refreshToken: string }> {
+    console.log(req.user)
     const payload = {
       id: req.user.id,
     };

@@ -1,9 +1,9 @@
 import { HttpStatus, applyDecorators } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { SwaggerMethod } from '../types';
-import { CategoriesController } from 'src/categories/categories.controller';
+import { RolesController } from 'src/roles/roles.controller';
 
-export const docCategoryService: SwaggerMethod<CategoriesController> = {
+export const docRoleService: SwaggerMethod<RolesController> = {
   create: (summary: string) => {
     return applyDecorators(
       ApiOperation({ summary }),

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
@@ -18,6 +18,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { CloudinaryModule } from './cloundinary/cloundinary.module';
 import { OrdersModule } from './orders/orders.module';
 import { ProductsModule } from './products/products.module';
+import LogsMiddleware from './common/middleware/logger.middleware';
 
 @Module({
   imports: [
@@ -59,11 +60,11 @@ import { ProductsModule } from './products/products.module';
     RolesModule,
     AuthModule,
     EmailsModule,
-    // BooksModule,
     CategoriesModule,
-    CloudinaryModule,
-    OrdersModule,
-    ProductsModule,
+    // OrdersModule,
+    // ProductsModule,
+    // CloudinaryModule,
+    // BooksModule,
   ],
   controllers: [AppController],
   providers: [
@@ -74,4 +75,8 @@ import { ProductsModule } from './products/products.module';
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LogsMiddleware).forRoutes('*');
+  }
+}

@@ -1,13 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { User } from './entity/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { HttpService } from '@nestjs/axios';
 import { Order } from 'src/orders/entities/order.entity';
 import { Product } from 'src/products/entities/product.entity';
 import { OrderDetail } from 'src/orders/entities/order-detail.entity';
+import { Role } from 'src/roles/entity/role.entity';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UsersService {
@@ -21,12 +23,56 @@ export class UsersService {
     private productRepository: Repository<Product>,
     @InjectRepository(OrderDetail)
     private orderDetailRepository: Repository<OrderDetail>,
+    @InjectRepository(Role)
+    private roleRepository: Repository<Role>,
 
     // ** Services
     private readonly httpService: HttpService,
+    private configService: ConfigService,
+
+    // ** Transactions
+    private dataSource: DataSource,
   ) { }
 
+  async createRoot() {
+    const queryRunner = await this.dataSource.createQueryRunner();
+
+    try {
+      // ** start transaction
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+
+      // ** create role root
+      const roleRoot = new Role();
+      roleRoot.name = 'Root';
+      roleRoot.permissions = ['Root'];
+      roleRoot.description = 'Role Root'
+      await queryRunner.manager.save(Role, roleRoot)
+
+      // ** create root account
+      const root = new User();
+      root.username = this.configService.get<string>('ROOT_USERNAME');
+      root.password = this.configService.get<string>('ROOT_PASS');
+      root.role = roleRoot;
+      root.firstName = 'PTIT'
+      root.lastName = 'HCM'
+      await queryRunner.manager.save(User, root)
+
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
   async create(body: CreateUserDto) {
+    const role = await this.roleRepository.findOneBy({ id: body.role })
+    console.log(role)
+    if (!role || role.name === 'Root') {
+      throw new NotFoundException("Role not found")
+    }
+
     const user = await new User();
     user.firstName = body.firstName;
     user.lastName = body.lastName;
@@ -34,7 +80,7 @@ export class UsersService {
     user.address = body.address;
     user.sex = body.sex;
     user.username = body.username;
-    user.role = body.role;
+    user.role = role;
 
     return this.userRepository.save(user);
   }

@@ -1,26 +1,53 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Role } from './entity/role.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class RolesService {
-  create(createRoleDto: CreateRoleDto) {
-    return 'This action adds a new role';
+  constructor(
+    @InjectRepository(Role)
+    private roleRepository: Repository<Role>) { }
+
+  async create(body: CreateRoleDto): Promise<Role> {
+    const role = new Role()
+    role.name = body.name;
+    role.description = body.description;
+    role.permissions = body.permissions;
+
+    const newRole = await this.roleRepository.save(role);
+    return newRole;
   }
 
-  findAll() {
-    return `This action returns all roles`;
+  async findAll(): Promise<Role[]> {
+    const roles = await this.roleRepository.find();
+    return roles.filter(role => role.name !== 'Root')
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} role`;
+  async findOne(id: number): Promise<Role> {
+    const role = await this.roleRepository.findOneBy({ id: id })
+    if (!role) {
+      throw new NotFoundException("Role not found")
+    }
+    return role;
   }
 
-  update(id: number, updateRoleDto: UpdateRoleDto) {
-    return `This action updates a #${id} role`;
+  async update(id: number, body: UpdateRoleDto) {
+    const role = await this.roleRepository.findOneBy({ id: id })
+    if (!role) {
+      throw new NotFoundException("Role not found")
+    }
+    const roleUpdated = await this.roleRepository.update({ id }, body)
+    return roleUpdated;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} role`;
+  async remove(id: number) {
+    const role = await this.roleRepository.findOneBy({ id: id })
+    if (!role) {
+      throw new NotFoundException("Role not found")
+    }
+    return this.roleRepository.delete({ id })
   }
 }

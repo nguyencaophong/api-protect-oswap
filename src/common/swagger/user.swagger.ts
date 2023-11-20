@@ -1,5 +1,5 @@
 import { HttpStatus, applyDecorators } from '@nestjs/common';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { UsersController } from 'src/users/users.controller';
 import { SwaggerMethod } from '../types';
 
@@ -10,6 +10,25 @@ export const docUserService: SwaggerMethod<UsersController> = {
       ApiResponse({
         status: HttpStatus.CREATED,
         description: 'Created user price success',
+      }),
+      ApiResponse({
+        status: HttpStatus.BAD_REQUEST,
+        description: 'Bad Request',
+      }),
+      ApiResponse({
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        description: 'Internal Server Error',
+      }),
+      ApiBearerAuth()
+    );
+  },
+
+  createRoot: (summary: string) => {
+    return applyDecorators(
+      ApiOperation({ summary }),
+      ApiResponse({
+        status: HttpStatus.CREATED,
+        description: 'Created root success',
       }),
       ApiResponse({
         status: HttpStatus.BAD_REQUEST,

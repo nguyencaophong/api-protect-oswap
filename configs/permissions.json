@@ -1,0 +1,93 @@
+[
+    {
+        "_id": "Root",
+        "name": "Root",
+        "can": true,
+        "action": "manage",
+        "subject": "all"
+    },
+    {
+        "_id": "CreateUser",
+        "name": "create User",
+        "can": true,
+        "action": "create",
+        "subject": "User"
+    },
+    {
+        "_id": "UpdateUser",
+        "name": "update User",
+        "can": true,
+        "action": "update",
+        "subject": "User"
+    },
+    {
+        "_id": "UpdateUser",
+        "name": "update User",
+        "can": true,
+        "action": "update",
+        "subject": "User"
+    },
+    {
+        "_id": "DeleteUser",
+        "name": "delete User",
+        "can": true,
+        "action": "delete",
+        "subject": "User"
+    },
+    {
+        "_id": "CreateRole",
+        "name": "create Role",
+        "can": true,
+        "action": "create",
+        "subject": "Role"
+    },
+    {
+        "_id": "UpdateRole",
+        "name": "update Role",
+        "can": true,
+        "action": "update",
+        "subject": "Role"
+    },
+    {
+        "_id": "UpdateRole",
+        "name": "update Role",
+        "can": true,
+        "action": "update",
+        "subject": "Role"
+    },
+    {
+        "_id": "DeleteRole",
+        "name": "delete Role",
+        "can": true,
+        "action": "delete",
+        "subject": "Role"
+    },
+    {
+        "_id": "CreateCategory",
+        "name": "create Category",
+        "can": true,
+        "action": "create",
+        "subject": "Category"
+    },
+    {
+        "_id": "UpdateCategory",
+        "name": "update Category",
+        "can": true,
+        "action": "update",
+        "subject": "Category"
+    },
+    {
+        "_id": "UpdateCategory",
+        "name": "update Category",
+        "can": true,
+        "action": "update",
+        "subject": "Category"
+    },
+    {
+        "_id": "DeleteCategory",
+        "name": "delete Cagtegory",
+        "can": true,
+        "action": "delete",
+        "subject": "Cagtegory"
+    }
+]

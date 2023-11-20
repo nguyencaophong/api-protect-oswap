@@ -9,10 +9,11 @@ import { HttpModule } from '@nestjs/axios';
 import { Order } from 'src/orders/entities/order.entity';
 import { Product } from 'src/products/entities/product.entity';
 import { OrderDetail } from 'src/orders/entities/order-detail.entity';
+import { Role } from 'src/roles/entity/role.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Category, Order, Product, OrderDetail]),
+    TypeOrmModule.forFeature([User, Category, Order, Product, OrderDetail, Role]),
     HttpModule.registerAsync({
       useFactory: () => ({
         timeout: 5000,

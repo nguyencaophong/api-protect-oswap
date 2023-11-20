@@ -1,6 +1,82 @@
 version: '3.8'
 services:
-  mysql:
+  gateway-service-1:
+    container_name: gateway-service-1
+    restart: always
+    build:
+      context: .
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - PORT=5001
+      - HOST=mysql-db-owasp
+      - MYSQL_DATABASE=unrestricted_access_sensitive_business_flows
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=kali
+      - REDIS_HOST=redis-db-owasp
+      - REDIS_PORT=6379
+    env_file:
+      - .env
+    ports:
+      - 5001:5001
+    networks:
+      - api_owasp_network
+    depends_on:
+      - mysql-db-owasp
+      - redis-db-owasp
+  gateway-service-2:
+    container_name: gateway-service-2
+    restart: always
+    build:
+      context: .
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - PORT=5002
+      - HOST=mysql-db-owasp
+      - MYSQL_DATABASE=unrestricted_access_sensitive_business_flows
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=kali
+      - REDIS_HOST=redis-db-owasp
+      - REDIS_PORT=6379
+    env_file:
+      - .env
+    ports:
+      - 5002:5002
+    networks:
+      - api_owasp_network
+    depends_on:
+      - mysql-db-owasp
+      - redis-db-owasp
+  gateway-service-3:
+    container_name: gateway-service-3
+    restart: always
+    build:
+      context: .
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - PORT=5003
+      - HOST=mysql-db-owasp
+      - MYSQL_DATABASE=unrestricted_access_sensitive_business_flows
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=kali
+      - REDIS_HOST=redis-db-owasp
+      - REDIS_PORT=6379
+    env_file:
+      - .env
+    ports:
+      - 5003:5003
+    networks:
+      - api_owasp_network
+    depends_on:
+      - mysql-db-owasp
+      - redis-db-owasp            
+
+  mysql-db-owasp:
     image: mysql:8.0
     cap_add:
       - SYS_NICE
@@ -8,22 +84,40 @@ services:
     env_file:
       - .env
     ports:
-      - '3306:3306'
+      - '3310:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: kali
+      MYSQL_DATABASE: unrestricted_access_sensitive_business_flows
     volumes:
-      - mysql_data:/var/lib/mysql
+      - ./mysql_data:/var/lib/mysql
+    networks:
+      - api_owasp_network
 
   redis-db-owasp:
     image: redis
     ports:
       - '6380:6379'
     volumes:
-      - mongodb_master_data:/data/redis
+      - ./redis_db_data:/data/redis
     networks:
       - api_owasp_network
 
+  nginx:
+    image: nginx:1.25.1
+    restart: always
+    ports:
+      - 88:88
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - api_owasp_network
+    depends_on:
+      - gateway-service-1
+      - gateway-service-2
+      - gateway-service-3
+
 volumes:
-  mysql_data:
-  mongodb_master_data:
+  api_owasp:
 networks:
   api_owasp_network:
     driver: bridge

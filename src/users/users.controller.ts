@@ -19,22 +19,39 @@ import { JwtAuthGuard, RolesGuard } from 'src/common/guards';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { ERoleDefault } from 'src/common/enum';
 import { SkipThrottle } from '@nestjs/throttler';
+import { ForbiddenError } from '@casl/ability';
+import { defineAbility } from 'src/casl/casl.factory';
+import { Action } from 'src/casl/action.enum';
+import { User } from './entity/user.entity';
+import { IUserRoles } from 'src/common/interfaces';
+import { GetUserRolesDecorator } from 'src/common/decorators';
 
 @ApiTags('Users')
 @SkipThrottle()
+@UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
   @docUserService.create('create user')
-  create(@Body() body: CreateUserDto) {
+  create(@Body() body: CreateUserDto,
+    @GetUserRolesDecorator() role: IUserRoles,
+  ) {
+    ForbiddenError.from(defineAbility(role)).throwUnlessCan(
+      Action.CREATE,
+      new User()
+    );
     return this.usersService.create(body);
   }
 
+  @Post('root')
+  @docUserService.createRoot('create user')
+  createRoot() {
+    return this.usersService.createRoot();
+  }
+
   @ApiBearerAuth()
-  @Roles([ERoleDefault.ADMIN, ERoleDefault.ROOT])
-  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('all')
   @docUserService.findAll('get all user')
   findAll(@Req() req) {
@@ -42,8 +59,6 @@ export class UsersController {
   }
 
   @ApiBearerAuth()
-  @Roles([ERoleDefault.ADMIN, ERoleDefault.ROOT])
-  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get(':id/get-by-id')
   @docUserService.findOne('get user by id')
   findOne(@Param('id') id: number) {
@@ -51,7 +66,6 @@ export class UsersController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
   @Put('update-myself')
   @docUserService.updateMyself('update info myself')
   updateMyself(@Req() req, @Body() body: UpdateUserDto) {
@@ -59,7 +73,6 @@ export class UsersController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
   @Get('read-myself')
   @docUserService.readMYself('read info myself')
   readMYself(@Req() req) {
@@ -67,7 +80,6 @@ export class UsersController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
   @Get('products-myself')
   @docUserService.readMYself('read info myself')
   productsMyself(@Req() req) {
@@ -75,8 +87,6 @@ export class UsersController {
   }
 
   @ApiBearerAuth()
-  @Roles([ERoleDefault.ADMIN, ERoleDefault.ROOT])
-  @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch(':id')
   @docUserService.update('update user by id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
@@ -84,8 +94,6 @@ export class UsersController {
   }
 
   @ApiBearerAuth()
-  @Roles([ERoleDefault.ADMIN, ERoleDefault.ROOT])
-  @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete(':id')
   @docUserService.remove('remove user by id')
   remove(@Param('id') id: string) {
