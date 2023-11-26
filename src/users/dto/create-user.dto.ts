@@ -47,3 +47,4 @@ export class CreateUserDto {
   @IsEnum(ERoleDefault)
   role: string;
 }
+  

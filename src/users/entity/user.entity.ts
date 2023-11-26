@@ -3,11 +3,12 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 import { ESex } from '../enum/sex.enum';
 import { TAddress } from '../types';
 import { ERoleDefault } from 'src/common/enum';
+import { UUID } from 'typeorm/driver/mongodb/bson.typings';
 
 @Entity()
 export class User {
   @ApiProperty()
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: number;
 
   @ApiProperty()
