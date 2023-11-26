@@ -89,7 +89,7 @@ services:
       MYSQL_ROOT_PASSWORD: kali
       MYSQL_DATABASE: unrestricted_access_sensitive_business_flows
     volumes:
-      - ./mysql_data:/var/lib/mysql
+      - ../mysql_data:/var/lib/mysql
     networks:
       - api_owasp_network
 
@@ -98,7 +98,7 @@ services:
     ports:
       - '6380:6379'
     volumes:
-      - ./redis_db_data:/data/redis
+      - ../redis_db_data:/data/redis
     networks:
       - api_owasp_network
 
