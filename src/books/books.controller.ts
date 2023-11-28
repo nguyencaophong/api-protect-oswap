@@ -15,14 +15,16 @@ import {
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
-import { ApiBody, ApiConsumes, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { docBookService } from 'src/common/swagger/book.swagger';
 import { ApiFiles } from 'src/common/interceptors/api-files.interceptor';
 import { JwtAuthGuard, RolesGuard } from 'src/common/guards';
-import { Roles, ValidPath } from 'src/common/decorators';
-import { EActionGetBook, ERoleDefault } from 'src/common/enum';
-import { ParseActionPipe, PathValidationPipe } from 'src/common/pipes';
+import { ERoleDefault } from 'src/common/enum';
+import { PathValidationPipe } from 'src/common/pipes';
 import { Response } from 'express';
+import { FindListBookDto } from './dto/find_list_book.dto';
+import { Roles } from 'src/common/decorators/roles.decorator';
+import { EActionGetBook } from 'src/common/enum/action-get-books.enum';
 
 @ApiTags('Books')
 @Controller('books')
@@ -98,16 +100,27 @@ export class BooksController {
 
   @Roles([ERoleDefault.USER])
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @docBookService.findOne('Get book detail with pagination')
-  @ApiParam({ name: 'action', type: 'enum', enum: EActionGetBook })
-  @Get(':id/:action')
+  @docBookService.readBooksWithPagination('Get book detail with pagination')
+  @Get(':id/pagination/v1')
   readBooksWithPagination(
     @Param('id', ParseIntPipe) id: number,
-    @Param('action', ParseActionPipe) action: string,
     @Query('path', PathValidationPipe) path: string,
     @Res() res: Response,
   ) {
-    return this.booksService.findWithPagination(+id, action, path, res);
+    return this.booksService.findWithPagination(+id, path, res);
+  }
+
+  @Roles([ERoleDefault.USER])
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @docBookService.readBooksWithPaginationV2('Get book detail with pagination V2')
+  @ApiQuery({ name: 'take', type: 'number', example: 1, })
+  @ApiQuery({ name: 'skip', type: 'number', example: 1, })
+  @Get('pagination/v2')
+  async readBooksWithPaginationV2(
+    @Query() query: FindListBookDto
+  ) {
+    const books = await this.booksService.findWithPaginationV2(query);
+    return books
   }
 
   @docBookService.update('Update book by Id')

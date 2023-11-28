@@ -3,7 +3,6 @@ import { ArgumentMetadata, Injectable, PipeTransform, BadRequestException } from
 @Injectable()
 export class PathValidationPipe implements PipeTransform {
   transform(value: any, metadata: ArgumentMetadata) {
-    console.log(value.replace(/\s/g, ''))
     if (metadata.type === 'query') {
       if (typeof value === 'string' && /^\/books\/\d+/.test(value.replace(/\s/g, ''))) {
         return value;

@@ -10,11 +10,17 @@ import {
   IPaginationOptions,
 } from 'nestjs-typeorm-paginate';
 import { Response } from 'express';
+import { FindListBookDto } from './dto/find_list_book.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class BooksService {
   constructor(
+    // ** Models
     @InjectRepository(Book) private bookRepository: Repository<Book>,
+
+    // ** Service
+    private configService: ConfigService,
   ) { }
 
   async create(
@@ -60,13 +66,22 @@ export class BooksService {
     return book;
   }
 
-  async findWithPagination(
-    id: number,
-    action: string,
-    path: string,
-    res: Response,
-  ) {
+  async findWithPagination(id: number, path: string, res: Response) {
     return res.redirect(path);
+  }
+
+  async findWithPaginationV2(query: FindListBookDto): Promise<Book[]> {
+    const take: number = query.take
+      ? query.take
+      : this.configService.get<number>('TAKE_PAGINATION');
+    const skip: number = query.skip
+      ? query.skip
+      : this.configService.get<number>('SKIP_PAGINATION');
+
+    return this.bookRepository.find({
+      take,
+      skip,
+    });
   }
 
   remove(id: number) {
